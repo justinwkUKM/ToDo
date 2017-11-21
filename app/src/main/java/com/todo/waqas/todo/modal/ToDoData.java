@@ -12,22 +12,47 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class ToDoData {
     int ToDoID;
-    String ToDoTaskDetails, ToDoTaskPriority, ToDoTaskStatus, ToDoNotes, ToDoCreationDate, ToDoAuthor ;
+    private String ToDoTaskDetails, ToDoTaskPriority, ToDoTaskStatus, ToDoNotes, ToDoCreationDate, ToDoAuthor ;
 
-    public String getToDoCreationDate() {
-        return ToDoCreationDate;
+
+    @Override
+    public String toString() {
+        return "ToDoData {id-" + ToDoID + ", taskDetails-" + ToDoTaskDetails + ", priority-" + ToDoTaskPriority + ", status-" + ToDoTaskStatus + ", notes-" + ToDoNotes +
+                ", creationDate-" + ToDoCreationDate +", author-" + ToDoAuthor +"}";
     }
 
-    public void setToDoCreationDate(String toDoCreationDate) {
-        ToDoCreationDate = toDoCreationDate;
+    public ToDoData(String toDoTaskDetails, String toDoAuthor, String toDoTaskStatus, String toDoNotes, String toDoTaskPriority) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        this.ToDoCreationDate = sdf.format(new Date());
+        this.ToDoTaskDetails = toDoTaskDetails;
+        this.ToDoAuthor = toDoAuthor;
+        this.ToDoTaskStatus = toDoTaskStatus;
+        this.ToDoNotes = toDoNotes;
+        this.ToDoTaskPriority = toDoTaskPriority;
+
     }
 
-    public String getToDoAuthor() {
-        return ToDoAuthor;
+    public ToDoData() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+        this.ToDoCreationDate = sdf.format(new Date());
+        this.ToDoTaskDetails = "";
+        this.ToDoAuthor = "";
+        this.ToDoTaskStatus = "";
+        this.ToDoNotes = "";
+        this.ToDoTaskPriority = "";
     }
 
-    public void setToDoAuthor(String toDoAuthor) {
-        ToDoAuthor = toDoAuthor;
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("ToDoTaskDetails", ToDoTaskDetails);
+        result.put("ToDoNotes", ToDoNotes);
+        result.put("ToDoCreationDate", ToDoCreationDate);
+        result.put("ToDoTaskStatus", ToDoTaskStatus);
+        result.put("ToDoAuthor", ToDoAuthor);
+        result.put("ToDoTaskPriority", ToDoTaskPriority);
+
+        return result;
     }
 
     public int getToDoID() {
@@ -70,32 +95,19 @@ public class ToDoData {
         ToDoNotes = toDoNotes;
     }
 
-    @Override
-    public String toString() {
-        return "ToDoData {id-" + ToDoID + ", taskDetails-" + ToDoTaskDetails + ", priority-" + ToDoTaskPriority + ", status-" + ToDoTaskStatus + ", notes-" + ToDoNotes +
-                ", creationDate-" + ToDoCreationDate +", author-" + ToDoAuthor +"}";
+    public String getToDoCreationDate() {
+        return ToDoCreationDate;
     }
 
-    public ToDoData(String toDoTaskDetails, String toDoAuthor, String toDoTaskStatus, String toDoNotes, String toDoTaskPriority) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
-        this.ToDoCreationDate = sdf.format(new Date());
-        this.ToDoTaskDetails = toDoTaskDetails;
-        this.ToDoAuthor = toDoAuthor;
-        this.ToDoTaskStatus = toDoTaskStatus;
-        this.ToDoNotes = toDoNotes;
-        this.ToDoTaskPriority = toDoTaskPriority;
-
+    public void setToDoCreationDate(String toDoCreationDate) {
+        ToDoCreationDate = toDoCreationDate;
     }
 
-    @Exclude
-    public Map<String, Object> toMap() {
-        HashMap<String, Object> result = new HashMap<>();
-        result.put("ToDoTaskDetails", ToDoTaskDetails);
-        result.put("ToDoNotes", ToDoNotes);
-        result.put("ToDoCreationDate", ToDoCreationDate);
-        result.put("ToDoTaskStatus", ToDoTaskStatus);
-
-        return result;
+    public String getToDoAuthor() {
+        return ToDoAuthor;
     }
 
+    public void setToDoAuthor(String toDoAuthor) {
+        ToDoAuthor = toDoAuthor;
+    }
 }

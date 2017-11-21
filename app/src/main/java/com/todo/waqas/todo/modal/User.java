@@ -8,23 +8,18 @@ public class User {
     public String avata;
     public Status status;
     public Message message;
-    public ToDoData toDoData;
+
 
 
     public User(){
         status = new Status();
         message = new Message();
-        toDoData = new ToDoData();
         status.isOnline = false;
         status.timestamp = 0;
         message.idReceiver = "0";
         message.idSender = "0";
         message.text = "";
+
         message.timestamp = 0;
-        toDoData.ToDoTaskDetails="";
-        toDoData.ToDoTaskPriority="";
-        toDoData.ToDoTaskStatus="";
-        toDoData.ToDoCreationDate="";
-        toDoData.ToDoAuthor="";
     }
 }

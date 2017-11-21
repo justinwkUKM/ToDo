@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 dataSnapshot.getKey();
-                Log.d(TAG+"Added",dataSnapshot.getValue(ToDoData.class).toString());
+               // Log.d(TAG+"Added",dataSnapshot.getValue(ToDoData.class).toString());
                 //fetchData(dataSnapshot);
 
             }
@@ -110,18 +110,18 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG+"Removed",dataSnapshot.getValue(ToDoData.class).toString());
+              //  Log.d(TAG+"Removed",dataSnapshot.getValue(ToDoData.class).toString());
                 //updateUI();
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                Log.d(TAG+"Moved",dataSnapshot.getValue(ToDoData.class).toString());
+              //  Log.d(TAG+"Moved",dataSnapshot.getValue(ToDoData.class).toString());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG+"Cancelled",databaseError.toString());
+              //  Log.d(TAG+"Cancelled",databaseError.toString());
             }
         });
 
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 save.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        final String key = FirebaseDatabase.getInstance().getReference().child("listItem").push().getKey();
+                        final String key = FirebaseDatabase.getInstance().getReference().child("task").push().getKey();
                         EditText todoText = (EditText) dialog.findViewById(R.id.input_task_desc);
                         EditText todoNotes = (EditText) dialog.findViewById(R.id.input_task_notes);
                         if (todoText.getText().length() >= 2) {
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             mysqlite = new SqliteHelper(getApplicationContext());
 
                             String listItemText = todoText.getText().toString();
-                            ToDoData listItem = new ToDoData(listItemText,FirebaseAuth.getInstance().getCurrentUser().getEmail(), false );
+                            ToDoData listItem = new ToDoData(listItemText,"a","s","n","p");
                             Map<String, Object> listItemValues = listItem.toMap();
                             Map<String, Object> childUpdates = new HashMap<>();
                             childUpdates.put("/task/" + key, listItemValues);
