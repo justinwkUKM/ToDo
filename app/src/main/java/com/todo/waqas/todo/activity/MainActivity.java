@@ -3,6 +3,7 @@ package com.todo.waqas.todo.activity;
 
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.LauncherActivity;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -29,6 +30,11 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.todo.waqas.todo.R;
 import com.todo.waqas.todo.adapters.ToDoListAdapter;
 import com.todo.waqas.todo.modal.StaticConfig;
@@ -37,6 +43,8 @@ import com.todo.waqas.todo.sqlite.SqliteHelper;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -47,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     ArrayList<ToDoData> tdd = new ArrayList<>();
     SqliteHelper mysqlite;
     SwipeRefreshLayout swipeRefreshLayout;
+
+    DatabaseReference mDB;
+    DatabaseReference mListItemRef;
+    private ArrayList<ToDoData> myListItems;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -74,7 +86,44 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             }
         });
 
+        mDB= FirebaseDatabase.getInstance().getReference();
+        mListItemRef = mDB.child("task");
+        myListItems = new ArrayList<>();
+
         initFirebase();
+
+        mListItemRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                dataSnapshot.getKey();
+                Log.d(TAG+"Added",dataSnapshot.getValue(ToDoData.class).toString());
+                //fetchData(dataSnapshot);
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG+"Changed",dataSnapshot.getKey());
+                //updateUI();
+                //mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG+"Removed",dataSnapshot.getValue(ToDoData.class).toString());
+                //updateUI();
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG+"Moved",dataSnapshot.getValue(ToDoData.class).toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG+"Cancelled",databaseError.toString());
+            }
+        });
 
 
         addTask.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 save.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        final String key = FirebaseDatabase.getInstance().getReference().child("listItem").push().getKey();
                         EditText todoText = (EditText) dialog.findViewById(R.id.input_task_desc);
                         EditText todoNotes = (EditText) dialog.findViewById(R.id.input_task_notes);
                         if (todoText.getText().length() >= 2) {
@@ -136,6 +186,14 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                             contentValues.put(SqliteHelper.Col_6, "TODAY");
                             contentValues.put(SqliteHelper.Col_7, "ME");
                             mysqlite = new SqliteHelper(getApplicationContext());
+
+                            String listItemText = todoText.getText().toString();
+                            ToDoData listItem = new ToDoData(listItemText,FirebaseAuth.getInstance().getCurrentUser().getEmail(), false );
+                            Map<String, Object> listItemValues = listItem.toMap();
+                            Map<String, Object> childUpdates = new HashMap<>();
+                            childUpdates.put("/task/" + key, listItemValues);
+                            FirebaseDatabase.getInstance().getReference().updateChildren(childUpdates);
+
                             Boolean b = mysqlite.insertInto(contentValues);
                             if (b) {
                                 dialog.hide();
